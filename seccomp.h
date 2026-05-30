@@ -1,5 +1,5 @@
 #ifndef X_SECCOMP_H
-#define X_SUPPORT_H
+#define X_SECCOMP_H
 
 
 #include <stdio.h>
