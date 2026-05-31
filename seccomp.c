@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <inttypes.h>
+
 
 #include <sys/prctl.h>
 #include <sys/stat.h>
@@ -46,8 +48,18 @@ FILE* sc_must_read_and_validate_header_from_file(const char *profile_path, struc
 
 void sc_must_read_filter_from_file(FILE *file, uint32_t len_bytes, struct sock_fprog *prog)
 {
-	prog->len = len_bytes / sizeof(struct sock_filter);
-	prog->filter = (struct sock_filter *)malloc(MAX_BPF_SIZE);
+	if((len_bytes % sizeof(struct sock_filter)) != 0) {
+		die("filter size %" PRIu32 " not a multiple of sock_filter size %zu", len_bytes, sizeof(struct sock_filter));
+	}
+
+	size_t num_filter_blocks = len_bytes / sizeof(struct sock_filter);
+	if(num_filter_blocks > USHRT_MAX) {
+		// sock_fprog.len is of type unsigned short
+		die("filter size too large");
+	}
+
+	prog->len = num_filter_blocks;
+	prog->filter = (struct sock_filter *)malloc(len_bytes);
 	if (prog->filter == NULL) {
 		die("cannot allocate %u bytes of memory for seccomp filter ", len_bytes);
 	}
