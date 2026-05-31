@@ -45,13 +45,16 @@ FILE* sc_must_read_and_validate_header_from_file(const char *profile_path, struc
 		fclose(file);
 		die("short read on seccomp header: %zu", num_read);
 	}
-
-	if(!(hdr->header[0] == 'S' &&
-		hdr->header[1] == 'C' &&
-		hdr->version == 0x01
-	)) {
+	// check everything in the seccomp file header
+	if (hdr->header[0] != 'S' || hdr->header[1] != 'C' ||
+		hdr->version != 0x01 ||
+		!(hdr->unrestricted == 0x00 || hdr->unrestricted == 0x01)
+	) {
 		fclose(file);
-		die("unsupported seccomp file header or version");
+		die("unexpected seccomp header: %x%x", hdr->header[0], hdr->header[1]);
+	}
+	if (hdr->len_filter > MAX_BPF_SIZE) {
+		die("allow filter size too big %u", hdr->len_filter);
 	}
 	return file;
 }

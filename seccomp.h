@@ -7,11 +7,13 @@
 
 #include <linux/filter.h>
 
+
 struct sc_seccomp_file_header {
-	// Magic bytes 'S', 'C'
+	// must be 'S', 'C'
 	char header[2];
-	// Currently only 0x01 is supported
+	// must be 0x1
 	uint8_t version;
+	// only 0x0 or 0x1 support right now
 	uint8_t unrestricted;
 
 	uint32_t len_filter;
@@ -25,3 +27,4 @@ void sc_apply_seccomp_filter(struct sock_fprog *prog);
 void die(const char *fmt, ...);
 
 #endif
+
