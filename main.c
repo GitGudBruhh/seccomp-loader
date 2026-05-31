@@ -1,4 +1,4 @@
-
+#include <stdlib.h>
 
 #include "seccomp.h"
 
@@ -16,4 +16,6 @@ int main(int argc, char **argv) {
 
 
 	sc_apply_seccomp_filter(&prog_allow);
+	free(prog_allow.filter);
+	fclose(file);
 }
