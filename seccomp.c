@@ -43,6 +43,13 @@ FILE* sc_must_read_and_validate_header_from_file(const char *profile_path, struc
 	if (num_read < sizeof(struct sc_seccomp_file_header)) {
 		die("short read on seccomp header: %zu", num_read);
 	}
+
+	if(!(hdr->header[0] == 'S' &&
+		hdr->header[1] == 'C' &&
+		hdr->version == 0x01
+	)) {
+		die("unsupported seccomp file header or version");
+	}
 	return file;
 }
 

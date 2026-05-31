@@ -8,7 +8,9 @@
 #include <linux/filter.h>
 
 struct sc_seccomp_file_header {
+	// Magic bytes 'S', 'C'
 	char header[2];
+	// Currently only 0x01 is supported
 	uint8_t version;
 	uint8_t unrestricted;
 
