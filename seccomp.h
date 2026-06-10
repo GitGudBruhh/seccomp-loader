@@ -7,6 +7,7 @@
 
 #include <linux/filter.h>
 
+#define MAX_BPF_SIZE 32*1024
 
 struct sc_seccomp_file_header {
 	// must be 'S', 'C'

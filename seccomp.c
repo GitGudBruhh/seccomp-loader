@@ -18,8 +18,6 @@
 
 #include "seccomp.h"
 
-#define MAX_BPF_SIZE 32*1024
-
 void die(const char *msg, ...)
 {
 	va_list ap;
@@ -54,6 +52,7 @@ FILE* sc_must_read_and_validate_header_from_file(const char *profile_path, struc
 		die("unexpected seccomp header: %x%x", hdr->header[0], hdr->header[1]);
 	}
 	if (hdr->len_filter > MAX_BPF_SIZE) {
+		fclose(file);
 		die("allow filter size too big %u", hdr->len_filter);
 	}
 	return file;
