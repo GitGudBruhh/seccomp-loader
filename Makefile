@@ -3,7 +3,7 @@ CFLAGS = -O2 -Wall -Werror
 
 SECCOMP_SOURCES = seccomp.c seccomp.h main.c
 
-CHECK_SOURCES = unit-tests/unit-tests.c
+CHECK_SOURCES = unit-tests/unit-tests.c seccomp.c
 CHECK_INCLUDES = $(shell pkg-config --cflags glib-2.0) -I.
 CHECK_LIBS = $(shell pkg-config --libs glib-2.0)
 

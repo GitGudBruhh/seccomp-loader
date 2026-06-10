@@ -1,6 +1,9 @@
 #include <glib.h>
+#include <unistd.h>
 
-#include "seccomp.c"
+#include "seccomp.h"
+
+#define UNUSED(x) (void)(x)
 
 static void make_seccomp_profile(struct sc_seccomp_file_header *hdr, int *fd,
 				 char **fname)
@@ -17,6 +20,7 @@ static void test_must_read_and_validate_header_from_file__happy(void)
 		.header[0] = 'S',
 		.header[1] = 'C',
 		.version = 1,
+		.unrestricted = 0,
 	};
 	char *profile = NULL;
 	int fd = 0;
@@ -25,6 +29,9 @@ static void test_must_read_and_validate_header_from_file__happy(void)
 	FILE *file =
 	    sc_must_read_and_validate_header_from_file(profile, &hdr);
 	g_assert_true(file != NULL);
+
+	free(profile);
+	fclose(file);
 }
 
 static void test_must_read_and_validate_header_from_file__missing_header(void)
@@ -36,9 +43,8 @@ static void test_must_read_and_validate_header_from_file__missing_header(void)
 		int fd = 0;
 		make_seccomp_profile(&hdr, &fd, &profile);
 		FILE *file = sc_must_read_and_validate_header_from_file(profile, &hdr);
+		UNUSED(file);
 		g_assert_not_reached();
-		// check null
-		g_assert_null(file);
 	}
 
 	g_test_trap_subprocess(NULL, 0, 0);
